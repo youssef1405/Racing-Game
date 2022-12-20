@@ -320,9 +320,17 @@ const getTracks = async () => {
   }
 };
 
-function getRacers() {
+const getRacers = async () => {
   // GET request to `${SERVER}/api/cars`
-}
+  try {
+    const response = await fetch(`${SERVER}/api/cars`);
+    const cars = await response.json();
+    console.log(cars);
+    return cars;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 function createRace(player_id, track_id) {
   player_id = parseInt(player_id);
