@@ -75,13 +75,15 @@ async function delay(ms) {
 // This async function controls the flow of the race, add the logic and error handling
 async function handleCreateRace() {
   // render starting UI
-  renderAt('#race', renderRaceStartView());
+  //renderAt('#race', renderRaceStartView());
 
-  // TODO - Get player_id and track_id from the store
+  //Get player_id and track_id from the store
+  const { track_id, player_id } = store;
 
   // const race = TODO - invoke the API call to create the race, then save the result
-
+  const race = await createRace(player_id, track_id);
   // TODO - update the store with the race id
+  store.race_id = race.ID;
   // For the API to work properly, the race id should be race id - 1
 
   // The race has been created, now start the countdown
@@ -141,8 +143,7 @@ function handleSelectPodRacer(target) {
 
   // add class selected to current target
   target.classList.add('selected');
-
-  // TODO - save the selected racer to the store
+  store.player_id = target.id;
 }
 
 function handleSelectTrack(target) {
@@ -156,8 +157,7 @@ function handleSelectTrack(target) {
 
   // add class selected to current target
   target.classList.add('selected');
-
-  // TODO - save the selected track id to the store
+  store.track_id = target.id;
 }
 
 function handleAccelerate() {
@@ -224,10 +224,10 @@ function renderCountdown(count) {
 	`;
 }
 
-function renderRaceStartView(track, racers) {
+/*function renderRaceStartView(track, racers) {
   return `
 		<header>
-			<h1>Race: ${track.name}</h1>
+			 <h1>Race: ${track.name}</h1>
 		</header>
 		<main id="two-columns">
 			<section id="leaderBoard">
@@ -242,7 +242,7 @@ function renderRaceStartView(track, racers) {
 		</main>
 		<footer></footer>
 	`;
-}
+}*/
 
 function resultsView(positions) {
   positions.sort((a, b) => (a.final_position > b.final_position ? 1 : -1));
