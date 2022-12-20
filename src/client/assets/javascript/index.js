@@ -203,14 +203,8 @@ function renderTrackCards(tracks) {
 			<h4>Loading Tracks...</4>
 		`;
   }
-
   const results = tracks.map(renderTrackCard).join('');
-
-  return `
-		<ul id="tracks">
-			${results}
-		</ul>
-	`;
+  return results;
 }
 
 function renderTrackCard(track) {
@@ -315,9 +309,16 @@ function defaultFetchOpts() {
 
 // TODO - Make a fetch call (with error handling!) to each of the following API endpoints
 
-function getTracks() {
+const getTracks = async () => {
   // GET request to `${SERVER}/api/tracks`
-}
+  try {
+    const response = await fetch(`${SERVER}/api/tracks`);
+    const tracks = await response.json();
+    return tracks;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 function getRacers() {
   // GET request to `${SERVER}/api/cars`
