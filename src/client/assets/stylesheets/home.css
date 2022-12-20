@@ -1,11 +1,14 @@
 /* HOME PAGE SPECIFIC STYLES */
 
-/* -------------------  MOBILE  --------------------- */
+.home-header {
+  background-image: url('../images/mario-cart.jpg');
+  background-size: cover;
+}
 
+/* -------------------  MOBILE  --------------------- */
 
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
-
 }
 
 /* -------------------  DESKTOP  -------------------- */
