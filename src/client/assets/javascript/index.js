@@ -1,5 +1,3 @@
-// PROVIDED CODE BELOW (LINES 1 - 80) DO NOT REMOVE
-
 // The store will hold all information needed globally
 let store = {
   track_id: undefined,
@@ -70,7 +68,6 @@ async function delay(ms) {
     console.log(error);
   }
 }
-// ^ PROVIDED CODE ^ DO NOT REMOVE
 
 // This async function controls the flow of the race, add the logic and error handling
 async function handleCreateRace() {
@@ -80,7 +77,7 @@ async function handleCreateRace() {
   // const race = TODO - invoke the API call to create the race, then save the result
   const race = await createRace(player_id, track_id);
   // TODO - update the store with the race id
-  store.race_id = race.ID - 1;
+  store.race_id = parseInt(race.ID) - 1;
   console.log(race);
 
   // render starting UI
@@ -108,21 +105,8 @@ const runRace = (raceID) => {
         renderAt('#race', resultsView(raceInfo.positions)); // to render the results view
         resolve(raceInfo); // resolve the promise
       }
-      console.log(raceInfo);
     }, 500);
-    // TODO - use Javascript's built in setInterval method to get race info every 500ms
-    /* 
-		TODO - if the race info status property is "in-progress", update the leaderboard by calling:
-
-		renderAt('#leaderBoard', raceProgress(res.positions))
-	*/
-    /* 
-		TODO - if the race info status property is "finished", run the following:
-
-
-	*/
-  });
-  // remember to add error handling for the Promise
+  }).catch((error) => console.log(error));
 };
 
 async function runCountdown() {
@@ -175,14 +159,12 @@ function handleSelectTrack(target) {
   store.track_id = target.id;
 }
 
-function handleAccelerate() {
-  console.log('accelerate button clicked');
+const handleAccelerate = () => {
   // TODO - Invoke the API call to accelerate
-}
+  accelerate(store.race_id);
+};
 
 // HTML VIEWS ------------------------------------------------
-// Provided code - do not remove
-
 function renderRacerCars(racers) {
   if (!racers.length) {
     return `
@@ -274,7 +256,6 @@ function resultsView(positions) {
 }
 
 function raceProgress(positions) {
-  console.log(typeof store.player_id);
   let userPlayer = positions.find((e) => e.id === parseInt(store.player_id));
   userPlayer.driver_name += ' (you)';
 
@@ -321,14 +302,10 @@ function defaultFetchOpts() {
   };
 }
 
-// TODO - Make a fetch call (with error handling!) to each of the following API endpoints
-
 const getTracks = async () => {
-  // GET request to `${SERVER}/api/tracks`
   try {
     const response = await fetch(`${SERVER}/api/tracks`);
     const tracks = await response.json();
-    console.log(tracks);
     return tracks;
   } catch (error) {
     console.log(error);
@@ -336,11 +313,9 @@ const getTracks = async () => {
 };
 
 const getRacers = async () => {
-  // GET request to `${SERVER}/api/cars`
   try {
     const response = await fetch(`${SERVER}/api/cars`);
     const cars = await response.json();
-    console.log(cars);
     return cars;
   } catch (error) {
     console.log(error);
@@ -363,7 +338,6 @@ const createRace = (player_id, track_id) => {
 };
 
 const getRace = async (id) => {
-  // GET request to `${SERVER}/api/races/${id}`
   return fetch(`${SERVER}/api/races/${id}`)
     .then((res) => res.json())
     .catch((err) => console.log(err));
@@ -373,13 +347,15 @@ const startRace = (id) => {
   return fetch(`${SERVER}/api/races/${id}/start`, {
     method: 'POST',
     ...defaultFetchOpts(),
-  })
-    .then((res) => res.json())
-    .catch((err) => console.log('Problem with getRace request::', err));
+  }).catch((err) => console.log('Problem with startRace request::', err));
 };
 
+// POST request to `${SERVER}/api/races/${id}/accelerate`
+// options parameter provided as defaultFetchOpts
+// no body or datatype needed for this request
 function accelerate(id) {
-  // POST request to `${SERVER}/api/races/${id}/accelerate`
-  // options parameter provided as defaultFetchOpts
-  // no body or datatype needed for this request
+  return fetch(`${SERVER}/api/races/${id}/accelerate`, {
+    method: 'POST',
+    ...defaultFetchOpts,
+  }).catch((error) => console.log(error));
 }
