@@ -36,6 +36,25 @@ section#accelerate button {
   font-size: 70px;
 }
 
+.progress-container {
+  margin-top: 2rem;
+  border: 1px solid #000;
+  width: 500px;
+}
+
+.player {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.player-progress {
+  background-size: cover;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
 }

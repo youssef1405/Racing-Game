@@ -273,9 +273,25 @@ function raceProgress(positions, track) {
   let userPlayer = positions.find((e) => e.id === parseInt(store.player_id));
   userPlayer.driver_name += ' (you)';
 
-  positions = positions.sort((a, b) => (a.segment > b.segment ? -1 : 1));
+  const playersProgress = positions.map((p) => {
+    const playerProgress = Math.round(
+      (p.segment / track.segments.length) * 100
+    );
+    return `
+        <div class="player">
+        <span>${p.driver_name} - ${playerProgress}%</span>
+        <div class="player-progress" style="background-image:url('/assets/images/${p.driver_name
+          .split(' ')[0]
+          .toLowerCase()}.png');margin-left:${playerProgress}px"></div>
+      </div>
+    `;
+  });
 
-  const playersList = positions.map((p, i) => {
+  const sortedPositions = positions.sort((a, b) =>
+    a.segment > b.segment ? -1 : 1
+  );
+
+  const playersList = sortedPositions.map((p, i) => {
     const progress = Math.round((p.segment / track.segments.length) * 100);
     return `
 			<tr>
@@ -287,24 +303,14 @@ function raceProgress(positions, track) {
 		`;
   });
 
-  const playersProgress = positions.map((p, i) => {
-    const playerProgress = Math.round(
-      (p.segment / track.segments.length) * 100
-    );
-    return `
-    
-        <span>${
-          p.driver_name
-        }</span><div style="background-image:url('/assets/images/${p.driver_name.toLowerCase()}.png');background-size:cover;width:40px;height:40px;border-radius:50%;margin-left:${playerProgress}%"></div>
-
-    `;
-  });
-
   return `
 		<main>
 			<h3>Leaderboard</h3>
 			<section id="leaderBoard">
-				${playersList.join('') + playersProgress.join('')}
+				${playersList.join('')}
+        <div class="progress-container">
+          ${playersProgress.join('')}
+        </div>
 			</section>
 		</main>
 	`;
