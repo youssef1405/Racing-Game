@@ -3,6 +3,8 @@ let store = {
   track_id: undefined,
   player_id: undefined,
   race_id: undefined,
+  racersNames: ['Mario', 'Bowser', 'Luigi', 'Peach', 'Toadette'],
+  tracksNames: ['Circuit', 'Stadium', 'Snow', 'Jungle', 'Fire', 'City'],
 };
 
 // We need our javascript to wait until the DOM is loaded
@@ -12,13 +14,11 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 async function onPageLoad() {
-  const racersNames = ['Mario', 'Bowser', 'Luigi', 'Peach', 'Toadette'];
-  const tracksNames = ['Circuit', 'Stadium', 'Snow', 'Jungle', 'Fire', 'City'];
   try {
     getTracks().then((tracks) => {
       console.log(tracks);
       const newTracks = tracks.map((track, i) => {
-        track.name = tracksNames[i];
+        track.name = store.tracksNames[i];
         return track;
       });
       const html = renderTrackCards(newTracks);
@@ -27,7 +27,7 @@ async function onPageLoad() {
 
     getRacers().then((racers) => {
       const newRacers = racers.map((racer, i) => {
-        racer.driver_name = racersNames[i];
+        racer.driver_name = store.racersNames[i];
         return racer;
       });
       const html = renderRacerCars(newRacers);
@@ -110,12 +110,16 @@ const runRace = (raceID, track) => {
     const runRaceInterval = setInterval(async () => {
       const raceInfo = await getRace(raceID);
       console.log(raceInfo);
+      const updatedPositions = raceInfo.positions.map((p, i) => {
+        p.driver_name = store.racersNames[i];
+        return p;
+      });
       if (raceInfo.status === 'in-progress') {
-        renderAt('#leaderBoard', raceProgress(raceInfo.positions, track));
+        renderAt('#leaderBoard', raceProgress(updatedPositions, track));
       } else if (raceInfo.status === 'finished') {
         clearInterval(runRaceInterval); // to stop the interval from repeating
 
-        renderAt('#race', resultsView(raceInfo.positions, track)); // to render the results view
+        renderAt('#race', resultsView(updatedPositions, track)); // to render the results view
         resolve(raceInfo); // resolve the promise
       }
     }, 500);
@@ -268,16 +272,10 @@ function resultsView(positions, track) {
 function raceProgress(positions, track) {
   let userPlayer = positions.find((e) => e.id === parseInt(store.player_id));
   userPlayer.driver_name += ' (you)';
-  console.log(track);
-  // const percentages = positions.map((p) =>
-  //   Math.round((p.segment / track.segments.length) * 100)
-  // );
-  // console.log(percentages);
-  positions = positions.sort((a, b) => (a.segment > b.segment ? -1 : 1));
-  console.log(positions);
-  // let count = 1;
 
-  const results = positions.map((p, i) => {
+  positions = positions.sort((a, b) => (a.segment > b.segment ? -1 : 1));
+
+  const playersList = positions.map((p, i) => {
     const progress = Math.round((p.segment / track.segments.length) * 100);
     return `
 			<tr>
@@ -289,11 +287,24 @@ function raceProgress(positions, track) {
 		`;
   });
 
+  const playersProgress = positions.map((p, i) => {
+    const playerProgress = Math.round(
+      (p.segment / track.segments.length) * 100
+    );
+    return `
+    
+        <span>${
+          p.driver_name
+        }</span><div style="background-image:url('/assets/images/${p.driver_name.toLowerCase()}.png');background-size:cover;width:40px;height:40px;border-radius:50%;margin-left:${playerProgress}%"></div>
+
+    `;
+  });
+
   return `
 		<main>
 			<h3>Leaderboard</h3>
 			<section id="leaderBoard">
-				${results.join('')}
+				${playersList.join('') + playersProgress.join('')}
 			</section>
 		</main>
 	`;
