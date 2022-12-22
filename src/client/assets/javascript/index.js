@@ -201,9 +201,9 @@ function renderRacerCard(racer) {
   return `
 		<li class="card podracer" id="${id}">
 			<h3>${driver_name}</h3>
-			<p>Top Speed: ${top_speed}</p>
-			<p>Acceleration: ${acceleration}</p>
-			<p>Handling: ${handling}</p>
+			<p class="racer-info">Top Speed: ${top_speed}</p>
+			<p class="racer-info">Acceleration: ${acceleration}</p>
+			<p class="racer-info">Handling: ${handling}</p>
 		</li>
 	`;
 }

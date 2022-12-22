@@ -5,11 +5,6 @@ header {
   background-image: url('../images/mario-cart.jpg');
 }
 
-.race-title {
-  margin: 1rem auto;
-  color: #2d54a1;
-}
-
 main#two-columns {
   margin: 50px 0;
   display: flex;
