@@ -12,14 +12,25 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 async function onPageLoad() {
+  const racersNames = ['Mario', 'Bowser', 'Luigi', 'Peach', 'Toadette'];
+  const tracksNames = ['Circuit', 'Stadium', 'Snow', 'Jungle', 'Fire', 'City'];
   try {
     getTracks().then((tracks) => {
-      const html = renderTrackCards(tracks);
+      console.log(tracks);
+      const newTracks = tracks.map((track, i) => {
+        track.name = tracksNames[i];
+        return track;
+      });
+      const html = renderTrackCards(newTracks);
       renderAt('#tracks', html);
     });
 
     getRacers().then((racers) => {
-      const html = renderRacerCars(racers);
+      const newRacers = racers.map((racer, i) => {
+        racer.driver_name = racersNames[i];
+        return racer;
+      });
+      const html = renderRacerCars(newRacers);
       renderAt('#racers', html);
     });
   } catch (error) {
@@ -90,19 +101,21 @@ async function handleCreateRace() {
   await startRace(store.race_id);
 
   // TODO - call the async function runRace
-  await runRace(store.race_id);
+  await runRace(store.race_id, race.Track);
 }
 
-const runRace = (raceID) => {
+const runRace = (raceID, track) => {
   // console.log(await getRace(raceID));
   return new Promise((resolve) => {
     const runRaceInterval = setInterval(async () => {
       const raceInfo = await getRace(raceID);
+      console.log(raceInfo);
       if (raceInfo.status === 'in-progress') {
-        renderAt('#leaderBoard', raceProgress(raceInfo.positions));
+        renderAt('#leaderBoard', raceProgress(raceInfo.positions, track));
       } else if (raceInfo.status === 'finished') {
         clearInterval(runRaceInterval); // to stop the interval from repeating
-        renderAt('#race', resultsView(raceInfo.positions)); // to render the results view
+
+        renderAt('#race', resultsView(raceInfo.positions, track)); // to render the results view
         resolve(raceInfo); // resolve the promise
       }
     }, 500);
@@ -145,9 +158,6 @@ function handleSelectPodRacer(target) {
 }
 
 function handleSelectTrack(target) {
-  console.log(target);
-  console.log('selected a track', target.id);
-
   // remove class selected from all track options
   const selected = document.querySelector('#tracks .selected');
   if (selected) {
@@ -187,9 +197,9 @@ function renderRacerCard(racer) {
   return `
 		<li class="card podracer" id="${id}">
 			<h3>${driver_name}</h3>
-			<p>${top_speed}</p>
-			<p>${acceleration}</p>
-			<p>${handling}</p>
+			<p>Top Speed: ${top_speed}</p>
+			<p>Acceleration: ${acceleration}</p>
+			<p>Handling: ${handling}</p>
 		</li>
 	`;
 }
@@ -241,7 +251,7 @@ function renderRaceStartView(track, racers) {
 	`;
 }
 
-function resultsView(positions) {
+function resultsView(positions, track) {
   positions.sort((a, b) => (a.final_position > b.final_position ? 1 : -1));
 
   return `
@@ -249,26 +259,33 @@ function resultsView(positions) {
 			<h1>Race Results</h1>
 		</header>
 		<main>
-			${raceProgress(positions)}
+			${raceProgress(positions, track)}
 			<a href="/race">Start a new race</a>
 		</main>
 	`;
 }
 
-function raceProgress(positions) {
+function raceProgress(positions, track) {
   let userPlayer = positions.find((e) => e.id === parseInt(store.player_id));
   userPlayer.driver_name += ' (you)';
-
+  console.log(track);
+  // const percentages = positions.map((p) =>
+  //   Math.round((p.segment / track.segments.length) * 100)
+  // );
+  // console.log(percentages);
   positions = positions.sort((a, b) => (a.segment > b.segment ? -1 : 1));
-  let count = 1;
+  console.log(positions);
+  // let count = 1;
 
-  const results = positions.map((p) => {
+  const results = positions.map((p, i) => {
+    const progress = Math.round((p.segment / track.segments.length) * 100);
     return `
 			<tr>
 				<td>
-					<h3>${count++} - ${p.driver_name}</h3>
+          <h3>${i + 1} - ${p.driver_name} - ${progress}</h3>
 				</td>
 			</tr>
+
 		`;
   });
 
@@ -276,7 +293,7 @@ function raceProgress(positions) {
 		<main>
 			<h3>Leaderboard</h3>
 			<section id="leaderBoard">
-				${results}
+				${results.join('')}
 			</section>
 		</main>
 	`;
