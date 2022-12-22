@@ -278,11 +278,12 @@ function raceProgress(positions, track) {
       (p.segment / track.segments.length) * 100
     );
     return `
-        <div class="player">
-        <span>${p.driver_name} - ${playerProgress}%</span>
-        <div class="player-progress" style="background-image:url('/assets/images/${p.driver_name
-          .split(' ')[0]
-          .toLowerCase()}.png');margin-left:${playerProgress}px"></div>
+    <span>${p.driver_name} - ${playerProgress}%</span>
+      <div class="player">
+          <div class="player-progress" style="background-image:url('/assets/images/${p.driver_name
+            .split(' ')[0]
+            .toLowerCase()}.png');left:${playerProgress - 5}%">
+          </div>
       </div>
     `;
   });
@@ -296,7 +297,7 @@ function raceProgress(positions, track) {
     return `
 			<tr>
 				<td>
-          <h3>${i + 1} - ${p.driver_name} - ${progress}</h3>
+          <h3>${i + 1} - ${p.driver_name}</h3>
 				</td>
 			</tr>
 
