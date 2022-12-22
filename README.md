@@ -11,6 +11,18 @@ The game has three main views:
 3. The race results view
 
 ## Screenshots
+### Homepage
+![image](https://user-images.githubusercontent.com/18706769/209211896-7b9fee1d-1cc4-4b07-9f80-e31947d1c7d8.png)
+
+### Start Race Page
+![image](https://user-images.githubusercontent.com/18706769/209212007-a4f36578-d866-43d2-99ae-69342021a111.png)
+
+### Race Progress
+![image](https://user-images.githubusercontent.com/18706769/209212093-5b58a84f-111f-499a-bba0-682d19e711c9.png)
+
+### Results Page
+![image](https://user-images.githubusercontent.com/18706769/209212253-d39f5b11-bc25-4722-950e-90381c705819.png)
+
 
 ## Starter Code
 
